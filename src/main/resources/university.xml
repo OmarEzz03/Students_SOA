@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><university>
+    <Student ID="1000">
+        <FirstName>omar</FirstName>
+        <LastName>ezz</LastName>
+        <Gender>male</Gender>
+        <GPA>3</GPA>
+        <Level>4</Level>
+        <Address>cairo</Address>
+    </Student>
+    <Student ID="1004">
+        <FirstName>nosiba</FirstName>
+        <LastName>khalid</LastName>
+        <Gender>female</Gender>
+        <GPA>3</GPA>
+        <Level>4</Level>
+        <Address>cairo</Address>
+    </Student>
+
+    <Student ID="1002">
+        <FirstName>mawada</FirstName>
+        <LastName>el-nagib</LastName>
+        <Gender>female</Gender>
+        <GPA>4.0</GPA>
+        <Level>4</Level>
+        <Address>Cairo</Address>
+    </Student>
+    
+</university>
