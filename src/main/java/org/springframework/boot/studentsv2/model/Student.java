@@ -1,84 +1,86 @@
 package org.springframework.boot.studentsv2.model;
 
 public class Student {
-    private String ID;
-    private String FirstName;
-    private String LastName;
-    private String Gender;
-    private Double GPA;
-    private Integer Level;
-    private String Address;
+    private String id;
+    private String firstName;
+    private String lastName;
+    private String gender;
+    private Double gpa;
+    private Integer level;
+    private String address;
 
     public String getId() {
-        return ID;
+        return id;
     }
 
     public String getFirstName() {
-        return FirstName;
+        return firstName;
     }
 
     public String getLastName() {
-        return LastName;
+        return lastName;
     }
 
     public String getGender() {
-        return Gender;
+        return gender;
     }
 
     public Double getGpa() {
-        return GPA;
+        return gpa;
     }
     
     public Integer getLevel() {
-        return Level;
+        return level;
     }
 
     public String getAddress() {
-        return Address;
+        return address;
     }
 
-    public void setID(String iD) {
-        ID = iD;
+
+    public void setID(String _iD) {
+        id = _iD;
     }
 
-    public void setFirstName(String firstName) {
-        FirstName = firstName;
+    public void setFirstName(String _firstName) {
+        firstName = _firstName;
     }
 
-    public void setLastName(String lastName) {
-        LastName = lastName;
+    public void setLastName(String _lastName) {
+        lastName = _lastName;
     }
 
-    public void setGender(String gender) {
-        Gender = gender;
+    public void setGender(String _gender) {
+        gender = _gender;
     }
 
-    public void setGPA(Double gPA) {
-        GPA = gPA;
+    public void setGPA(Double _gPA) {
+        gpa = _gPA;
     }
 
-    public void setLevel(Integer level) {
-        Level = level;
+    public void setLevel(Integer _level) {
+        level = _level;
     }
 
-    public void setAddress(String address) {
-        Address = address;
+    public void setAddress(String _address) {
+        address = _address;
     }
 
     public Student() {}
 
-    public Student(String iD, String firstName, String lastName, String gender, Double gPA, Integer level, String address) {
-        ID = iD;
-        FirstName = firstName;
-        LastName = lastName;
-        Gender = gender;
-        GPA = gPA;
-        Level = level;
-        Address = address;
+    public Student(String _iD, String _firstName, String _lastName, String _gender, Double _gPA, Integer _level, String _address) {
+        id = _iD;
+        firstName = _firstName;
+        lastName = _lastName;
+        gender = _gender;
+        gpa = _gPA;
+        level = _level;
+        address = _address;
     }
     @Override
     public String toString() {
-        return "Student [ID=" + ID + ", FirstName=" + FirstName + ", LastName=" + LastName + ", Gender=" + Gender
-                + ", GPA=" + GPA + ", Level=" + Level + ", Address=" + Address + "]";
+        return "Student [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", gender=" + gender
+                + ", gpa=" + gpa + ", level=" + level + ", address=" + address + "]";
     }
+
 }
