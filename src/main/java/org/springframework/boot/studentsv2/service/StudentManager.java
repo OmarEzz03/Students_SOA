@@ -57,6 +57,7 @@ public class StudentManager {
     public void addStudents(Document document, File xmlFile, Student student) throws Exception {
         Element studentElement = document.createElement("Student");
         for (Field field : student.getClass().getDeclaredFields()) {
+            field.setAccessible(true);
             if ((field.get(student).equals( null))) {
                 throw new Exception(field.getName() + " is Null");
             }
@@ -68,7 +69,7 @@ public class StudentManager {
             throw new Exception("Student with ID " + student.getId() + " already exists.");
         }
 
-        if (!student.getAddress().matches("[a-z]")) {
+        if (!student.getAddress().matches("^[a-zA-Z]+$")) {
             throw new Exception("Address should have characters only");
         }
 
