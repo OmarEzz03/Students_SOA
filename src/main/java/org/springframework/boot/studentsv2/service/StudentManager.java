@@ -67,6 +67,12 @@ public class StudentManager {
                 throw new Exception(field.getName() + " is Empty");
             }
         }
+        if (!student.getFirstName().matches("^[a-zA-Z]+$")) {
+            throw new Exception("FirstName should have characters only");
+        }
+        if (!student.getLastName().matches("^[a-zA-Z]+$")) {
+            throw new Exception("LastName should have characters only");
+        }
         if (searchDocument("ID", student.getId().toString(), document) != null) {
             throw new Exception("Student with ID " + student.getId() + " already exists.");
         }
