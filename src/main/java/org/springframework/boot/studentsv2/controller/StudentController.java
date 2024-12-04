@@ -5,6 +5,8 @@ import org.springframework.boot.studentsv2.service.StudentManager;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import org.w3c.dom.Document;
 import java.io.File;
-import java.util.Scanner;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -72,7 +73,7 @@ public class StudentController {
         try {
             File xmlFile = new File(file_path);
             Document document = getDocument(xmlFile);
-            Node resultNode = studentManager.searchDocument(searchParam, value, document);
+            Node resultNode = studentManager.searchDocument(searchParam.toLowerCase(), value, document);
             if (resultNode != null) {
                 Element element = (Element) resultNode;
                 Student student = new Student(element.getAttribute("ID"),
@@ -97,9 +98,22 @@ public class StudentController {
             File xmlFile = new File(file_path);
             Document document = getDocument(xmlFile);
             studentManager.deleteStudent(document, xmlFile, id);
-            return ResponseEntity.ok("Student deleted successfully");
+            return ResponseEntity.ok("Student deleted successfully.");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error deleting student: " + e.getMessage());
         }
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateStudent(@PathVariable Long id, @RequestBody Student student) {
+        try {
+            File xmlFile = new File(file_path);
+            Document document = getDocument(xmlFile);
+            studentManager.updateStudent(document, xmlFile, id, student);
+            return ResponseEntity.ok("Student updated successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error updating student: " + e.getMessage());
+        }
+    }
+    
 }

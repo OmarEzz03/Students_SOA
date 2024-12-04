@@ -17,7 +17,6 @@ import org.springframework.boot.studentsv2.model.Student;
 // import org.w3c.dom.NodeList;
 import org.w3c.dom.Document;
 import java.io.File;
-import java.util.Scanner;
 
 public class StudentManager {
 
@@ -38,6 +37,15 @@ public class StudentManager {
         Element element = document.createElement(tagName);
         element.appendChild(document.createTextNode(textElemnt));
         parent.appendChild(element);
+    }
+
+    private void updateChildNode(Element parentElement, String tagName, String newValue) {
+        if (newValue != null) {
+            NodeList nodes = parentElement.getElementsByTagName(tagName);
+            if (nodes.getLength() > 0) {
+                nodes.item(0).setTextContent(newValue);
+            }
+        }
     }
 
     private static void saveStudents(Document document, File XmFile) {
@@ -79,7 +87,7 @@ public class StudentManager {
             if (node.getNodeType() == Node.ELEMENT_NODE) {
 
                 Element element = (Element) node;
-                if (searchParam.equals("ID"))
+                if (searchParam.equals("id"))
                 {
                     String ID = element.getAttributes().getNamedItem("ID").getNodeValue();
                     if (ID.equals(searchParamValue))
@@ -88,7 +96,7 @@ public class StudentManager {
                         break;
                     }
                 }
-                else if(searchParam.equals("FirstName"))
+                else if(searchParam.equals("firstname"))
                 {
                     String FirstName = element.getElementsByTagName("FirstName").item(0).getChildNodes().item(0).getNodeValue().toLowerCase();
                     if (FirstName.equals(searchParamValue.toLowerCase()))
@@ -102,4 +110,22 @@ public class StudentManager {
         return resultNode;
     } 
 
+    public void updateStudent(Document document, File xmlFile, Long id, Student student) throws Exception {
+        Node resultNode = searchDocument("ID", id.toString(), document); 
+        if (resultNode == null) {
+            throw new Exception("Student with ID " + student.getId() + " not found.");
+        }
+        if (student.getId() != null) {
+            throw new Exception("Student ID can't be updated.");
+        }
+        Element element = (Element) resultNode;
+        updateChildNode(element, "FirstName", student.getFirstName());
+        updateChildNode(element, "LastName", student.getLastName());
+        updateChildNode(element, "Gender", student.getGender());
+        updateChildNode(element, "GPA", student.getGpa() != null ? student.getGpa().toString() : null);
+        updateChildNode(element, "Level", student.getLevel() != null ? student.getLevel().toString() : null);
+        updateChildNode(element, "Address", student.getAddress());
+
+        saveStudents(document, xmlFile);
+    }
 }
