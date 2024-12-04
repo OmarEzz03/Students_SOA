@@ -89,7 +89,7 @@ public class StudentManager {
         if (!student.getLastName().matches("^[a-zA-Z]+$")) {
             throw new Exception("LastName should have characters only");
         }
-        if (searchDocument("ID", student.getId().toString(), document) != null) {
+        if (!searchDocument("ID", student.getId().toString(), document).isEmpty()) {
 
             throw new Exception("Student with ID " + student.getId() + " already exists.");
         }
