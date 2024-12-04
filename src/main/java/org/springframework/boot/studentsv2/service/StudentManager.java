@@ -17,6 +17,9 @@ import org.springframework.boot.studentsv2.model.Student;
 // import org.w3c.dom.NodeList;
 import org.w3c.dom.Document;
 import java.io.File;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -29,8 +32,9 @@ public class StudentManager {
     public StudentManager() {}
 
     public void deleteStudent(Document document, File xmlFile, String ID) throws Exception {
-        Node resultNode = searchDocument("ID", ID, document);
-        if (resultNode != null) {
+        List<Node> resultNodes = searchDocument("id", ID, document);
+        if (!resultNodes.isEmpty()) {
+            Node resultNode = resultNodes.get(0);
             Element element = (Element) resultNode;
             element.getParentNode().removeChild(resultNode);
             saveStudents(document, xmlFile);
@@ -78,7 +82,7 @@ public class StudentManager {
                 throw new Exception(field.getName() + " is Empty");
             }
         }
-        if (searchDocument("ID", student.getId().toString(), document) != null) {
+        if (!searchDocument("id", student.getId().toString(), document).isEmpty()) {
             throw new Exception("Student with ID " + student.getId() + " already exists.");
         }
 
@@ -119,8 +123,8 @@ public class StudentManager {
         saveStudents(document, xmlFile);
     }
 
-    public Node searchDocument(String searchParam, String searchParamValue, Document document) {
-        Node resultNode = null;
+    public List<Node> searchDocument(String searchParam, String searchParamValue, Document document) {
+        List<Node> resultNodes = new ArrayList<Node>();
         NodeList nodeList = document.getDocumentElement().getChildNodes();
 
         for (int i = 0; i < nodeList.getLength(); i++)
@@ -129,37 +133,74 @@ public class StudentManager {
             if (node.getNodeType() == Node.ELEMENT_NODE) {
 
                 Element element = (Element) node;
-                if (searchParam.equals("id"))
-                {
-                    String ID = element.getAttributes().getNamedItem("ID").getNodeValue();
-                    if (ID.equals(searchParamValue))
-                    {
-                        resultNode = node;
+                switch (searchParam.toLowerCase()) {
+                    case "id":
+                        String ID = element.getAttributes().getNamedItem("ID").getNodeValue();
+                        if (ID.equals(searchParamValue))
+                        {
+                            resultNodes.add(node);
+                        }
                         break;
-                    }
-                }
-                else if(searchParam.equals("firstname"))
-                {
-                    String FirstName = element.getElementsByTagName("FirstName").item(0).getChildNodes().item(0).getNodeValue().toLowerCase();
-                    if (FirstName.equals(searchParamValue.toLowerCase()))
-                    {
-                        resultNode = node;
+                    case "firstname":
+                        String FirstName = element.getElementsByTagName("FirstName").item(0).getChildNodes().item(0).getNodeValue().toLowerCase();
+                        if (FirstName.equals(searchParamValue.toLowerCase()))
+                        {
+                            resultNodes.add(node);
+                        }
                         break;
-                    }
+                    case "lastname":
+                        String LastName = element.getElementsByTagName("LastName").item(0).getChildNodes().item(0).getNodeValue().toLowerCase();
+                        if (LastName.equals(searchParamValue.toLowerCase()))
+                        {
+                            resultNodes.add(node);
+                        }
+                        break;
+                    case "gender":
+                        String Gender = element.getElementsByTagName("Gender").item(0).getChildNodes().item(0).getNodeValue().toLowerCase();
+                        if (Gender.equals(searchParamValue.toLowerCase()))
+                        {
+                            resultNodes.add(node);
+                        }
+                        break;
+                    case "address":
+                        String Address = element.getElementsByTagName("Address").item(0).getChildNodes().item(0).getNodeValue().toLowerCase();
+                        if (Address.equals(searchParamValue.toLowerCase()))
+                        {
+                            resultNodes.add(node);
+                        }
+                        break;
+                    case "gpa":
+                        String GPA = element.getElementsByTagName("GPA").item(0).getChildNodes().item(0).getNodeValue().toLowerCase();
+                        if (GPA.equals(searchParamValue.toLowerCase()))
+                        {
+                            resultNodes.add(node);
+                        }
+                        break;
+                    case "level":
+                        String Level = element.getElementsByTagName("Level").item(0).getChildNodes().item(0).getNodeValue().toLowerCase();
+                        if (Level.equals(searchParamValue.toLowerCase()))
+                        {
+                            resultNodes.add(node);
+                        }
+                        break;
                 }
             }
         }
-        return resultNode;
+        return resultNodes;
     } 
 
     public void updateStudent(Document document, File xmlFile, Long id, Student student) throws Exception {
-        Node resultNode = searchDocument("ID", id.toString(), document); 
-        if (resultNode == null) {
-            throw new Exception("Student with ID " + student.getId() + " not found.");
-        }
+        List<Node> resultNodes = searchDocument("id", id.toString(), document); 
+
         if (student.getId() != null) {
             throw new Exception("Student ID can't be updated.");
         }
+
+        if (resultNodes.isEmpty()) {
+            throw new Exception("Student with ID " + id + " not found.");
+        }
+
+        Node resultNode = resultNodes.get(0); 
         Element element = (Element) resultNode;
         updateChildNode(element, "FirstName", student.getFirstName());
         updateChildNode(element, "LastName", student.getLastName());

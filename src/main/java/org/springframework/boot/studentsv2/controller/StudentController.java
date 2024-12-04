@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import org.w3c.dom.Document;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -69,26 +73,33 @@ public class StudentController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Student> searchStudents(@RequestParam String searchParam, @RequestParam String value) {
+    public ResponseEntity<Map<String, Object>> searchStudents(@RequestParam String searchParam, @RequestParam String value) {
         try {
             File xmlFile = new File(file_path);
             Document document = getDocument(xmlFile);
-            Node resultNode = studentManager.searchDocument(searchParam.toLowerCase(), value, document);
-            if (resultNode != null) {
-                Element element = (Element) resultNode;
-                Student student = new Student(element.getAttribute("ID"),
-                                             element.getElementsByTagName("FirstName").item(0).getTextContent(),
-                                             element.getElementsByTagName("LastName").item(0).getTextContent(),
-                                             element.getElementsByTagName("Gender").item(0).getTextContent(),
-                                             Double.parseDouble(element.getElementsByTagName("GPA").item(0).getTextContent()),
-                                             Integer.parseInt(element.getElementsByTagName("Level").item(0).getTextContent()),
-                                             element.getElementsByTagName("Address").item(0).getTextContent());
-                return ResponseEntity.ok(student);
+            List<Node> resultNodes = studentManager.searchDocument(searchParam.toLowerCase(), value, document);
+            if (!resultNodes.isEmpty()) {
+                List<Student> students = new ArrayList<Student>();
+                for (Node resultNode : resultNodes) {
+                    Element element = (Element) resultNode;
+                    Student student = new Student(element.getAttribute("ID"),
+                                                 element.getElementsByTagName("FirstName").item(0).getTextContent(),
+                                                 element.getElementsByTagName("LastName").item(0).getTextContent(),
+                                                 element.getElementsByTagName("Gender").item(0).getTextContent(),
+                                                 Double.parseDouble(element.getElementsByTagName("GPA").item(0).getTextContent()),
+                                                 Integer.parseInt(element.getElementsByTagName("Level").item(0).getTextContent()),
+                                                 element.getElementsByTagName("Address").item(0).getTextContent());
+                    students.add(student);
+                }
+                Map<String, Object>resultMap = new HashMap<>();
+                resultMap.put("numberOfStudents", students.size());
+                resultMap.put("students", students);
+                return ResponseEntity.ok(resultMap);
             } else {
                 return ResponseEntity.notFound( ).build();
             }
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(new Student());
+            return ResponseEntity.status(500).body(new HashMap<>());
         }
     }
 
