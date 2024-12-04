@@ -17,6 +17,8 @@ import org.springframework.boot.studentsv2.model.Student;
 // import org.w3c.dom.NodeList;
 import org.w3c.dom.Document;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Scanner;
 import java.lang.reflect.Field;
 
@@ -85,6 +87,24 @@ public class StudentManager {
         addChild(document, studentElement, "Level", student.getLevel().toString());
         addChild(document, studentElement, "Address", student.getAddress());
         document.getDocumentElement().appendChild(studentElement);
+
+        Element root = document.getDocumentElement();
+        NodeList nodeList = root.getElementsByTagName("Student");
+        ArrayList<Element> students = new ArrayList<>();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            students.add((Element) nodeList.item(i));
+        }
+
+        students.sort(Comparator.comparingInt(e -> Integer.parseInt(e.getAttribute("ID"))));
+
+        while (root.hasChildNodes()) {
+            root.removeChild(root.getFirstChild());
+        }
+
+        for (Element s : students) {
+            root.appendChild(s);
+        }
+        
         saveStudents(document, xmlFile);
     }
 
