@@ -18,6 +18,7 @@ import org.springframework.boot.studentsv2.model.Student;
 import org.w3c.dom.Document;
 import java.io.File;
 import java.util.Scanner;
+import java.lang.reflect.Field;
 
 public class StudentManager {
 
@@ -55,9 +56,26 @@ public class StudentManager {
 
     public void addStudents(Document document, File xmlFile, Student student) throws Exception {
         Element studentElement = document.createElement("Student");
+        for (Field field : student.getClass().getDeclaredFields()) {
+            if ((field.get(student).equals( null))) {
+                throw new Exception(field.getName() + " is Null");
+            }
+            if ((field.getType().equals(String.class)) && (field.get(student).equals(""))) {
+                throw new Exception(field.getName() + " is Empty");
+            }
+        }
         if (searchDocument("ID", student.getId().toString(), document) != null) {
             throw new Exception("Student with ID " + student.getId() + " already exists.");
         }
+
+        if (!student.getAddress().matches("[a-z]")) {
+            throw new Exception("Address should have characters only");
+        }
+
+        if ((student.getGpa() < 0)||(student.getGpa() > 4)) {
+            throw new Exception("GPA should be in range from 0 to 4");
+        }
+        
         studentElement.setAttribute("ID", student.getId().toString());
         addChild(document, studentElement, "FirstName", student.getFirstName());
         addChild(document, studentElement, "LastName", student.getLastName());
