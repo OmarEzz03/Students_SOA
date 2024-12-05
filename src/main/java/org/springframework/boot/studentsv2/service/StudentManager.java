@@ -21,10 +21,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Scanner;
-import java.lang.reflect.Field;
 
 
 public class StudentManager {
@@ -219,4 +216,50 @@ public class StudentManager {
 
         saveStudents(document, xmlFile);
     }
+
+    public ArrayList<Element> sortStudents(Document document, File xmlFile, String sortBy, String order) {
+        Element root = document.getDocumentElement();
+        NodeList nodeList = root.getElementsByTagName("Student");
+        ArrayList<Element> students = new ArrayList<>();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            students.add((Element) nodeList.item(i));
+        }
+
+        Comparator<Element> comparator;
+        switch (sortBy.toLowerCase()) {
+            case "firstname":
+                comparator = Comparator.comparing(e -> e.getElementsByTagName("FirstName").item(0).getTextContent());
+                break;
+            case "lastname":
+                comparator = Comparator.comparing(e -> e.getElementsByTagName("LastName").item(0).getTextContent());
+                break;
+            case "gpa":
+                comparator = Comparator.comparingDouble(e -> Double.parseDouble(e.getElementsByTagName("GPA").item(0).getTextContent()));
+                break;
+            case "level":
+                comparator = Comparator.comparingInt(e -> Integer.parseInt(e.getElementsByTagName("Level").item(0).getTextContent()));
+                break;
+            case "address":
+                comparator = Comparator.comparing(e -> e.getElementsByTagName("Address").item(0).getTextContent());
+                break;
+            default: // default to sorting by ID
+                comparator = Comparator.comparingInt(e -> Integer.parseInt(e.getAttribute("ID")));
+                break;
+        }
+
+        if ("desc".equalsIgnoreCase(order)) {
+            comparator = comparator.reversed();
+        }
+
+        students.sort(comparator);
+        while (root.hasChildNodes()) {
+            root.removeChild(root.getFirstChild());
+        }
+
+        for (Element s : students) {
+            root.appendChild(s);
+        }
+        saveStudents(document, xmlFile);
+        return students;
+    }   
 }
