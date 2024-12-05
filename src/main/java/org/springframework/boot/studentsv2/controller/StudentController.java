@@ -91,6 +91,7 @@ public class StudentController {
                                                  element.getElementsByTagName("Address").item(0).getTextContent());
                     students.add(student);
                 }
+                
                 Map<String, Object>resultMap = new HashMap<>();
                 resultMap.put("numberOfStudents", students.size());
                 resultMap.put("students", students);
@@ -127,4 +128,27 @@ public class StudentController {
         }
     }
     
+    @GetMapping("/sort")
+    public ResponseEntity<List<Student>> sortStudents(@RequestParam String sortBy, @RequestParam String order) {
+        try {
+            File xmlFile = new File(file_path);
+            Document document = getDocument(xmlFile);
+            List<Element> resultElements = studentManager.sortStudents(document, xmlFile, sortBy, order);
+
+            List<Student> students = new ArrayList<>();
+            for (Element element : resultElements) {
+                Student student = new Student(element.getAttribute("ID"),
+                                             element.getElementsByTagName("FirstName").item(0).getTextContent(),
+                                             element.getElementsByTagName("LastName").item(0).getTextContent(),
+                                             element.getElementsByTagName("Gender").item(0).getTextContent(),
+                                             Double.parseDouble(element.getElementsByTagName("GPA").item(0).getTextContent()),
+                                             Integer.parseInt(element.getElementsByTagName("Level").item(0).getTextContent()),
+                                             element.getElementsByTagName("Address").item(0).getTextContent());
+                students.add(student);
+            }
+            return ResponseEntity.ok(students);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ArrayList<>());
+        }
+    }
 }
